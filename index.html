@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script type="text/javascript">
+    // Change "MySecretPassword123" to whatever password you want to use
+    var password = "Bdadad@2027";
+    var input = prompt("This page is private. Please enter the password to view content:");
+    
+    if (input !== password) {
+        alert("Incorrect password. Access denied.");
+        // Redirects unauthorized users away from your page
+        window.location.href = "https://github.com"; 
+    }
+</script>    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agency-Client Outcome Alignment Matrix</title>
