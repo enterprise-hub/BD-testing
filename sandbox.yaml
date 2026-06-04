@@ -1,0 +1,52 @@
+name: Sandbox CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Display repository information
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+      
+      - name: List HTML files
+        run: |
+          echo "HTML files in repository:"
+          find . -name "*.html" -type f
+      
+      - name: Validate HTML files
+        run: |
+          echo "Validating HTML structure..."
+          for file in $(find . -name "*.html" -type f); do
+            echo "Checking: $file"
+          done
+      
+      - name: Build artifacts (if needed)
+        run: |
+          echo "Build step - prepare files for deployment"
+          mkdir -p build
+          cp -r *.html build/ 2>/dev/null || true
+      
+      - name: Run tests (placeholder)
+        run: |
+          echo "Running tests..."
+          echo "Add your test commands here"
+      
+      - name: Deploy
+        run: |
+          echo "Deployment step"
+          echo "Add your deployment commands here"
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
