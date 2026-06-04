@@ -1,0 +1,43 @@
+name: Server CI/CD (BD-testing)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, DockerServer]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show runner info
+        run: |
+          echo "Running on self-hosted runner"
+          echo "Repo: ${{ github.repository }}"
+          echo "Commit: ${{ github.sha }}"
+
+      - name: Build project
+        run: |
+          echo "Building HTML project..."
+          rm -rf build
+          mkdir -p build
+          cp *.html build/ 2>/dev/null || true
+
+      - name: Deploy to EC2 folder
+        run: |
+          echo "Starting deployment..."
+
+          DEPLOY_DIR="/home/ubuntu/bd-testing"
+
+          rm -rf $DEPLOY_DIR/*
+          mkdir -p $DEPLOY_DIR
+
+          cp -r build/* $DEPLOY_DIR/
+
+          echo "Deployment completed at $(date)" > $DEPLOY_DIR/deploy.log
+
+          echo "Files deployed successfully:"
+          ls -la $DEPLOY_DIR
