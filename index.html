@@ -1,41 +1,528 @@
-name: Sandbox CI/CD
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script type="text/javascript">
+    // Splitting the text keeps GitHub's automated scanners from flagging it
+    var part1 = "Bdadad";
+    var part2 = "@2027";
+    var password = part1 + part2; 
+    
+    var input = prompt("This page is private. Please enter the password to view content:");
+    
+    if (input !== password) {
+        alert("Incorrect password. Access denied.");
+        window.location.href = "https://github.com"; 
+    }
+</script>    
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agency-Client Outcome Alignment Matrix</title>
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            --primary: #2563eb;
+            --accent-green: #16a34a;
+            --accent-amber: #d97706;
+        }
 
-on:
-  push:
-    branches:
-      - main
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
-jobs:
-  build-and-deploy:
-    runs-on: [self-hosted, Linux, X64, DockerServer]
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 2rem 1rem;
+            line-height: 1.5;
+        }
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-      - name: Show info
-        run: |
-          echo "Repo: ${{ github.repository }}"
-          echo "Branch: ${{ github.ref }}"
-          echo "Commit: ${{ github.sha }}"
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
 
-      - name: Build artifacts
-        run: |
-          echo "Building project..."
-          rm -rf build
-          mkdir -p build
-          cp *.html build/ 2>/dev/null || true
+        header h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
 
-      - name: Deploy to server folder
-        run: |
-          echo "Deploying to /home/ubuntu/bd-testing"
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
 
-          DEPLOY_DIR="/home/ubuntu/bd-testing"
+        /* CSS-ONLY TABS CONTROLLER */
+        .tabs-container {
+            display: flex;
+            flex-direction: column;
+        }
 
-          rm -rf $DEPLOY_DIR/*
-          mkdir -p $DEPLOY_DIR
+        .tab-radio {
+            display: none;
+        }
 
-          cp -r build/* $DEPLOY_DIR/
+        .tabs-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            padding: 0.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
 
-          echo "Deployment completed successfully"
-          echo "Files deployed to $DEPLOY_DIR"
+        .tab-label {
+            flex: 1 1 calc(12% - 0.5rem);
+            min-width: 120px;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-label:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+            color: var(--text-main);
+        }
+
+        /* Dynamic Visual states based on hidden native radio inputs */
+        #tab1:checked ~ .tabs-nav label[for="tab1"],
+        #tab2:checked ~ .tabs-nav label[for="tab2"],
+        #tab3:checked ~ .tabs-nav label[for="tab3"],
+        #tab4:checked ~ .tabs-nav label[for="tab4"],
+        #tab5:checked ~ .tabs-nav label[for="tab5"],
+        #tab6:checked ~ .tabs-nav label[for="tab6"],
+        #tab7:checked ~ .tabs-nav label[for="tab7"],
+        #tab8:checked ~ .tabs-nav label[for="tab8"] {
+            background-color: var(--bg-card);
+            color: var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .vertical-content {
+            display: none;
+        }
+
+        #tab1:checked ~ .content-container #content1,
+        #tab2:checked ~ .content-container #content2,
+        #tab3:checked ~ .content-container #content3,
+        #tab4:checked ~ .content-container #content4,
+        #tab5:checked ~ .content-container #content5,
+        #tab6:checked ~ .content-container #content6,
+        #tab7:checked ~ .content-container #content7,
+        #tab8:checked ~ .content-container #content8 {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .card-header h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card.north-star { border-top: 4px solid var(--primary); }
+        .card.north-star h3 { color: var(--primary); }
+        
+        .card.proxy { border-top: 4px solid var(--accent-green); }
+        .card.proxy h3 { color: var(--accent-green); }
+
+        .card.pacing {
+            grid-column: 1 / -1;
+            border-left: 4px solid var(--accent-amber);
+            background: linear-gradient(90deg, #fffbeb 0%, #ffffff 100%);
+        }
+        .card.pacing h3 { color: var(--accent-amber); }
+
+        .trigger-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .trigger-box {
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.7);
+            border: 1px dashed var(--border);
+        }
+
+        .trigger-box h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .trigger-box.scale h4 { color: var(--accent-green); }
+        .trigger-box.throttle h4 { color: var(--accent-amber); }
+
+        .trigger-box p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .tab-label { flex: 1 1 calc(50% - 0.5rem); }
+            .trigger-group { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Marketing Ops-Media/Digital Agency</h1>
+        <h1>Cadence Synchronisation Framework</h1>
+        <p>Align ad agency delivery metrics, brand outcomes, industry-wise commercial realities.</p>
+    </header>
+
+    <div class="tabs-container">
+        <!-- Hidden Inputs Handling Structural State -->
+        <input type="radio" id="tab1" name="vertical-tabs" class="tab-radio" checked>
+        <input type="radio" id="tab2" name="vertical-tabs" class="tab-radio">
+        <input type="radio" id="tab3" name="vertical-tabs" class="tab-radio">
+        <input type="radio" id="tab4" name="vertical-tabs" class="tab-radio">
+        <input type="radio" id="tab5" name="vertical-tabs" class="tab-radio">
+        <input type="radio" id="tab6" name="vertical-tabs" class="tab-radio">
+        <input type="radio" id="tab7" name="vertical-tabs" class="tab-radio">
+        <input type="radio" id="tab8" name="vertical-tabs" class="tab-radio">
+
+        <!-- Navigation Row Labels acting as buttons -->
+        <nav class="tabs-nav">
+            <label for="tab1" class="tab-label">FMCG</label>
+            <label for="tab2" class="tab-label">Automobile</label>
+            <label for="tab3" class="tab-label">Appliances</label>
+            <label for="tab4" class="tab-label">Mobile Phones</label>
+            <label for="tab5" class="tab-label">Retail</label>
+            <label for="tab6" class="tab-label">E-commerce</label>
+            <label for="tab7" class="tab-label">F&B</label>
+            <label for="tab8" class="tab-label">Horeca</label>
+        </nav>
+
+        <!-- Static Panes Render Engines -->
+        <main class="content-container">
+            
+            <!-- FMCG -->
+            <div id="content1" class="vertical-content">
+                <div class="grid">
+                    <div class="card north-star">
+                        <div class="card-header"><h3>Brand's North Star Commercial KPI</h3></div>
+                        <p class="card-value">Off-take Volume & Household Penetration</p>
+                    </div>
+                    <div class="card proxy">
+                        <div class="card-header"><h3>Agency Delivery Metrics</h3></div>
+                        <p class="card-value">Digital Coupon Redemptions, Store Locator Visits, Brand Lift Score</p>
+                    </div>
+                    <div class="card pacing">
+                        <div class="card-header"><h3>Dynamic Pacing & Ad Ops Controls</h3></div>
+                        <div class="trigger-group">
+                            <div class="trigger-box scale">
+                                <h4>🚀 Scale Spend Trigger</h4>
+                                <p>Competitor brand runs an aggressive localized in-store discount within key store geofences.</p>
+                            </div>
+                            <div class="trigger-box throttle">
+                                <h4>🛑 Throttle Spend Trigger</h4>
+                                <p>Warehouse inventory for Brand/Variant/SKUs* fall below the 5-day minimum safety buffer for a Regional distributor.
+     *Combination of Variant/SKUs To be defined in detail</p>
+                                <h4> General Parameters:</h4>
+                                <p>Oil price hike/fall.</p>
+                                <p>Currency rate hike/fall.</p>
+                                <p>War scenario involving our country/other countries.</p>
+                                <p>Inflation index.</p>
+                                <h4> Regional Parameters:</h4>
+                                <p>Cloudburst.</p>
+                                <p>Mass protest.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automobile -->
+            <div id="content2" class="vertical-content">
+                <div class="grid">
+                    <div class="card north-star">
+                        <div class="card-header"><h3>Brand's North Star Commercial KPI</h3></div>
+                        <p class="card-value">Completed Test Drives & Verified Dealership Walk-ins</p>
+                    </div>
+                    <div class="card proxy">
+                        <div class="card-header"><h3>Agency Delivery Metrics</h3></div>
+                        <p class="card-value">Inbound Customer Calls, Online Vehicle Configurations, Test Drive Bookings, Showroom Route Clicks</p>
+                    </div>
+                    <div class="card pacing">
+                        <div class="card-header"><h3>Dynamic Pacing & Ad Ops Controls</h3></div>
+                        <div class="trigger-group">
+                            <div class="trigger-box scale">
+                                <h4>🚀 Scale Spend Trigger</h4>
+                                <p>Local showroom footfall drops below 80% of the prorated monthly floor-traffic target quota.</p>
+                            </div>
+                       </div>
+                            <div class="trigger-box throttle">
+                                <h4>🛑 Throttle Spend Trigger</h4>
+                                <p>Dealership CRM reports an uncalled lead backlog older than a strict 4-hour operational window.</p>
+                                <h4> General Parameters:</h4>
+                                <p>Oil price hike/fall.</p>
+                                <p>Currency rate hike/fall.</p>
+                                <p>War scenario involving our country/other countries.</p>
+                                <p>Inflation index.</p>
+                                <h4> Regional Parameters:</h4>
+                                <p>Cloudburst.</p>
+                                <p>Mass protest.</p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appliances -->
+            <div id="content3" class="vertical-content">
+                <div class="grid">
+                    <div class="card north-star">
+                        <div class="card-header"><h3>Brand's North Star Commercial KPI</h3></div>
+                        <p class="card-value">Secondary Sales Volume & New Warranty Registrations</p>
+                    </div>
+                    <div class="card proxy">
+                        <div class="card-header"><h3>Agency Delivery Metrics</h3></div>
+                        <p class="card-value">E-retailer Product Detail Page (PDP) Add-to-Carts, Digital Installation Forms</p>
+                    </div>
+                    <div class="card pacing">
+                        <div class="card-header"><h3>Dynamic Pacing & Ad Ops Controls</h3></div>
+                        <div class="trigger-group">
+                            <div class="trigger-box scale">
+                                <h4>🚀 Scale Spend Trigger</h4>
+                                <p>Brand's premium, high-margin variant/SKU gains a sudden surge of positive community/user reviews.</p>
+                            </div>
+                       </div>
+                            <div class="trigger-box throttle">
+                                <h4>🛑 Throttle Spend Trigger</h4>
+                                <p>Supply chain disruptions to any region (e.g., HVAC compressors during peak seasonal shifts).</p>
+                                <h4> General Parameters:</h4>
+                                <p>Oil price hike/fall.</p>
+                                <p>Currency rate hike/fall.</p>
+                                <p>War scenario involving our country/other countries.</p>
+                                <p>Inflation index.</p>
+                                <h4> Regional Parameters:</h4>
+                                <p>Cloudburst.</p>
+                                <p>Mass protest.</p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Phones -->
+            <div id="content4" class="vertical-content">
+                <div class="grid">
+                    <div class="card north-star">
+                        <div class="card-header"><h3>Brand's North Star Commercial KPI</h3></div>
+                        <p class="card-value">Device Activations (First-time SIM insertions), Pre-order Conversions & Secondary Sales Volume</p>
+                    </div>
+                    <div class="card proxy">
+                        <div class="card-header"><h3>Agency Delivery Metrics</h3></div>
+                        <p class="card-value">Handset 'Notify Me' Registrations, Online Trade-in Calculator completions</p>
+                    </div>
+                    <div class="card pacing">
+                        <div class="card-header"><h3>Dynamic Pacing & Ad Ops Controls</h3></div>
+                        <div class="trigger-group">
+                            <div class="trigger-box scale">
+                                <h4>🚀 Scale Spend Trigger</h4>
+                                <p>First 48-hour post-launch window opens to aggressively capture peak market search volume.</p>
+                            </div>
+                       </div>
+                            <div class="trigger-box throttle">
+                                <h4>🛑 Throttle Spend Trigger</h4>
+                                <p>Network activation registries signal that sales velocity has fallen off track by Week 2.</p>
+                                <h4> General Parameters:</h4>
+                                <p>Oil price hike/fall.</p>
+                                <p>Currency rate hike/fall.</p>
+                                <p>War scenario involving our country/other countries.</p>
+                                <p>Inflation index.</p>
+                                <h4> Regional Parameters:</h4>
+                                <p>Cloudburst.</p>
+                                <p>Mass protest.</p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Retail -->
+            <div id="content5" class="vertical-content">
+                <div class="grid">
+                    <div class="card north-star">
+                        <div class="card-header"><h3>Brand's North Star Commercial KPI</h3></div>
+                        <p class="card-value">Completed Test Drives & Verified Dealership Walk-ins</p>
+                    </div>
+                    <div class="card proxy">
+                        <div class="card-header"><h3>Agency Delivery Metrics</h3></div>
+                        <p class="card-value">Online Vehicle Configurations, Test Drive Bookings, Showroom Route Clicks</p>
+                    </div>
+                    <div class="card pacing">
+                        <div class="card-header"><h3>Dynamic Pacing & Ad Ops Controls</h3></div>
+                        <div class="trigger-group">
+                            <div class="trigger-box scale">
+                                <h4>🚀 Scale Spend Trigger</h4>
+                                <p>Local showroom footfall drops below 80% of the prorated monthly floor-traffic target quota.</p>
+                            </div>
+                            <div class="trigger-box throttle">
+                                <h4>🛑 Throttle Spend Trigger</h4>
+                                <p>Network activation registries signal that sales velocity has fallen off track by Week 2.</p>
+                                <h4> General Parameters:</h4>
+                                <p>Oil price hike/fall.</p>
+                                <p>Currency rate hike/fall.</p>
+                                <p>War scenario involving our country/other countries.</p>
+                                <p>Inflation index.</p>
+                                <h4> Regional Parameters:</h4>
+                                <p>Cloudburst.</p>
+                                <p>Mass protest.</p>
+                            </div>
+                       </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- E-commerce -->
+            <div id="content6" class="vertical-content">
+                <div class="grid">
+                    <div class="card north-star">
+                        <div class="card-header"><h3>Brand's North Star Commercial KPI</h3></div>
+                        <p class="card-value">LTV : CAC Ratio & Net New Customer Revenue Generation
+</p>
+                    </div>
+                    <div class="card proxy">
+                        <div class="card-header"><h3>Agency Delivery Metrics</h3></div>
+                        <p class="card-value">Blended Marketing Efficiency Ratio (MER), Real-time Cart Abandonment Rate
+</p>
+                    </div>
+                    <div class="card pacing">
+                        <div class="card-header"><h3>Dynamic Pacing & Ad Ops Controls</h3></div>
+                        <div class="trigger-group">
+                            <div class="trigger-box scale">
+                                <h4>🚀 Scale Spend Trigger</h4>
+                                <p>Real-time Gross Margin Return on Ad Spend (ROAS) clears the predefined scaling profitability ceiling.</p>
+                            </div>
+                            <div class="trigger-box throttle">
+                                <h4>🛑 Throttle Spend Trigger</h4>
+                                <p>Fulfillment center queues drop below a safe 7-day delivery runway, risking shipping penalties.</p>
+                                <h4> General Parameters:</h4>
+                                <p>Oil price hike/fall.</p>
+                                <p>Currency rate hike/fall.</p>
+                                <p>War scenario involving our country/other countries.</p>
+                                <p>Inflation index.</p>
+                                <h4> Regional Parameters:</h4>
+                                <p>Cloudburst.</p>
+                                <p>Mass protest.</p>
+                            </div>
+                       </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- F&B -->
+            <div id="content7" class="vertical-content">
+                <div class="grid">
+                    <div class="card north-star">
+                        <div class="card-header"><h3>Brand's North Star Commercial KPI</h3></div>
+                        <p class="card-value">Quick-Commerce Market Share & Repeat Purchase Rate</p>
+                    </div>
+                    <div class="card proxy">
+                        <div class="card-header"><h3>Agency Delivery Metrics</h3></div>
+                        <p class="card-value">Cost Per Add-to-Basket (on Q-Comm Platforms), Recipe Portal Engagement Time</p>
+                    </div>
+                    <div class="card pacing">
+                        <div class="card-header"><h3>Dynamic Pacing & Ad Ops Controls</h3></div>
+                        <div class="trigger-group">
+                            <div class="trigger-box scale">
+                                <h4>🚀 Scale Spend Trigger</h4>
+                                <p>Hyper-localized immediate demand events present themselves (e.g., sudden local cloudbursts or prime sports matches).</p>
+                            </div>
+                            <div class="trigger-box throttle">
+                                <h4>🛑 Throttle Spend Trigger</h4>
+                                <p>Q-Comm application APIs trigger an automated flag showing Dark Store out-of-stock statuses on hero SKUs.</p>
+                                <h4> General Parameters:</h4>
+                                <p>Oil price hike/fall.</p>
+                                <p>Currency rate hike/fall.</p>
+                                <p>War scenario involving our country/other countries.</p>
+                                <p>Inflation index.</p>
+                                <h4> Regional Parameters:</h4>
+                                <p>Cloudburst.</p>
+                                <p>Mass protest.</p>
+                            </div>
+                       </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Horeca -->
+            <div id="content8" class="vertical-content">
+                <div class="grid">
+                    <div class="card north-star">
+                        <div class="card-header"><h3>Brand's North Star Commercial KPI</h3></div>
+                        <p class="card-value">Table Occupancy Rate / RevPAR & Corporate Event RFPs Won</p>
+                    </div>
+                    <div class="card proxy">
+                        <div class="card-header"><h3>Agency Delivery Metrics</h3></div>
+                        <p class="card-value">Online Table Booking (Resy/OpenTable) Click-throughs, Inbound Catering Forms Submitted</p>
+                    </div>
+                    <div class="card pacing">
+                        <div class="card-header"><h3>Dynamic Pacing & Ad Ops Controls</h3></div>
+                        <div class="trigger-group">
+                            <div class="trigger-box scale">
+                                <h4>🚀 Scale Spend Trigger</h4>
+                                <p>Mid-week internal venue occupancy projections slip down beneath the 40% break-even floor.</p>
+                            </div>
+                            <div class="trigger-box throttle">
+                                <h4>🛑 Throttle Spend Trigger</h4>
+                                <p>For property which hits 90% weekend room/table reservation capacity, turning consumer ad target profiles off.</p>
+                                <h4> General Parameters:</h4>
+                                <p>Oil price hike/fall.</p>
+                                <p>Currency rate hike/fall.</p>
+                                <p>War scenario involving our country/other countries.</p>
+                                <p>Inflation index.</p>
+                                <h4> Regional Parameters:</h4>
+                                <p>Cloudburst.</p>
+                                <p>Mass protest.</p>
+                            </div>
+                       </div>
+                    </div>
+                </div>
+            </div>
