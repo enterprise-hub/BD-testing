@@ -1,52 +1,43 @@
-name: Sandbox CI/CD
+name: Server CI/CD (BD-testing)
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: [self-hosted, Linux, X64, DockerServer]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
-      - name: Display repository information
+
+      - name: Show runner info
         run: |
-          echo "Repository: ${{ github.repository }}"
-          echo "Branch: ${{ github.ref }}"
+          echo "Running on self-hosted runner"
+          echo "Repo: ${{ github.repository }}"
           echo "Commit: ${{ github.sha }}"
-      
-      - name: List HTML files
+
+      - name: Build project
         run: |
-          echo "HTML files in repository:"
-          find . -name "*.html" -type f
-      
-      - name: Validate HTML files
-        run: |
-          echo "Validating HTML structure..."
-          for file in $(find . -name "*.html" -type f); do
-            echo "Checking: $file"
-          done
-      
-      - name: Build artifacts (if needed)
-        run: |
-          echo "Build step - prepare files for deployment"
+          echo "Building HTML project..."
+          rm -rf build
           mkdir -p build
-          cp -r *.html build/ 2>/dev/null || true
-      
-      - name: Run tests (placeholder)
+          cp *.html build/ 2>/dev/null || true
+
+      - name: Deploy to EC2 folder
         run: |
-          echo "Running tests..."
-          echo "Add your test commands here"
-      
-      - name: Deploy
-        run: |
-          echo "Deployment step"
-          echo "Add your deployment commands here"
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+          echo "Starting deployment..."
+
+          DEPLOY_DIR="/home/ubuntu/bd-testing"
+
+          rm -rf $DEPLOY_DIR/*
+          mkdir -p $DEPLOY_DIR
+
+          cp -r build/* $DEPLOY_DIR/
+
+          echo "Deployment completed at $(date)" > $DEPLOY_DIR/deploy.log
+
+          echo "Files deployed successfully:"
+          ls -la $DEPLOY_DIR
